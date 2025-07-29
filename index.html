@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropMarket - Encuentra tu hogar ideal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .logo i {
+            font-size: 24px;
+            color: #7c3aed;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #7c3aed;
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #7c3aed;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #6d28d9;
+        }
+
+        .btn-secondary {
+            background: none;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            color: #7c3aed;
+        }
+
+        .btn-success {
+            background-color: #059669;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #047857;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .search-bar {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .input-field {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        /* Property Cards */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-top: 32px;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .property-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-price {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .property-favorite {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .property-favorite:hover {
+            background: white;
+        }
+
+        .property-info {
+            padding: 20px;
+        }
+
+        .property-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .property-location {
+            color: #6b7280;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .property-features {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .property-feature {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Sections */
+        .section {
+            padding: 64px 0;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 48px;
+            color: #374151;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: #1f2937;
+            color: white;
+            padding: 64px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            text-align: center;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #8b5cf6;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #d1d5db;
+        }
+
+        /* Search Page */
+        .search-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+            padding: 32px 0;
+        }
+
+        .filters-sidebar {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .filter-group {
+            margin-bottom: 24px;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .filter-inputs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Property Detail */
+        .detail-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            padding: 32px 0;
+        }
+
+        .image-gallery {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .main-image {
+            position: relative;
+            height: 400px;
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-details {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+
+        .property-specs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .spec {
+            text-align: center;
+        }
+
+        .spec-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 4px;
+        }
+
+        .spec-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .contact-sidebar {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .price-display {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .price-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 8px;
+        }
+
+        .price-label {
+            color: #6b7280;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .textarea-field {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            height: 80px;
+            font-family: inherit;
+        }
+
+        .textarea-field:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Auth Pages */
+        .auth-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 32px;
+            color: #374151;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 24px;
+            color: #6b7280;
+        }
+
+        .auth-link a {
+            color: #7c3aed;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-subtitle {
+            color: #6b7280;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon.favorites { color: #ef4444; }
+        .stat-icon.searches { color: #3b82f6; }
+        .stat-icon.messages { color: #10b981; }
+        .stat-icon.views { color: #8b5cf6; }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .dashboard-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .search-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+
+            .property-specs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+                <span>PropMarket</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#" onclick="showPage('home')">Inicio</a>
+                <a href="#" onclick="showPage('search')">Buscar</a>
+                <a href="#" onclick="showPage('sell')">Vender</a>
+                <a href="#" onclick="showPage('about')">Nosotros</a>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="showPage('login')">Ingresar</button>
+                <button class="btn btn-primary" onclick="showPage('register')">Registrarse</button>
+                <button id="dashboardBtn" class="btn btn-success hidden" onclick="showPage('dashboard')">
+                    <i class="fas fa-user"></i> Dashboard
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div id="app">
+        
+        <!-- HOME PAGE -->
+        <div id="home" class="page active">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <h1>Encuentra tu hogar ideal</h1>
+                    <p>Miles de propiedades te esperan. Compra, vende o invierte con confianza.</p>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-bar">
+                        <div class="search-form">
+                            <input type="text" class="input-field" placeholder="¿Dónde quieres vivir? Ej: Palermo, CABA">
+                            <select class="input-field">
+                                <option>Tipo de propiedad</option>
+                                <option>Casa</option>
+                                <option>Departamento</option>
+                                <option>Terreno</option>
+                                <option>Comercial</option>
+                            </select>
+                            <select class="input-field">
+                                <option>Precio máximo</option>
+                                <option>Hasta $100K USD</option>
+                                <option>Hasta $200K USD</option>
+                                <option>Hasta $500K USD</option>
+                                <option>Sin límite</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="showPage('search')">
+                                <i class="fas fa-search"></i>BUSCAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Properties -->
+            <section class="section">
+                <div class="container">
+                    <h2 class="section-title">Propiedades Destacadas</h2>
+                    <div class="property-grid" id="featuredProperties">
+                        <!-- Properties will be loaded here -->
+                    </div>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <button class="btn btn-primary" onclick="showPage('search')">
+                            Ver todas las propiedades
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="stat">
+                            <div class="stat-number">15,000+</div>
+                            <div class="stat-label">Propiedades Activas</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">8,500+</div>
+                            <div class="stat-label">Propiedades Vendidas</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">25,000+</div>
+                            <div class="stat-label">Usuarios Registrados</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">1,200+</div>
+                            <div class="stat-label">Agentes Verificados</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SEARCH PAGE -->
+        <div id="search" class="page">
+            <div class="container">
+                <div class="search-layout">
+                    <!-- Filters Sidebar -->
+                    <div class="filters-sidebar">
+                        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Filtros</h3>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Precio (USD)</label>
+                            <div class="filter-inputs">
+                                <input type="number" placeholder="Mín" class="input-field">
+                                <input type="number" placeholder="Máx" class="input-field">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo de propiedad</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Casa
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Departamento
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Terreno
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox"> Comercial
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Ambientes</label>
+                            <select class="input-field">
+                                <option>Cualquiera</option>
+                                <option>1 ambiente</option>
+                                <option>2 ambientes</option>
+                                <option>3 ambientes</option>
+                                <option>4+ ambientes</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            Aplicar Filtros
+                        </button>
+                    </div>
+
+                    <!-- Results Area -->
+                    <div>
+                        <div class="results-header">
+                            <div style="color: #6b7280;">
+                                Mostrando <span style="font-weight: 600;">1-12</span> de <span style="font-weight: 600;">2,847</span> propiedades
+                            </div>
+                            <div>
+                                <select class="input-field" style="width: auto;">
+                                    <option>Más relevantes</option>
+                                    <option>Precio: menor a mayor</option>
+                                    <option>Precio: mayor a menor</option>
+                                    <option>Más nuevos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Property Grid -->
+                        <div class="property-grid" id="searchResults">
+                            <!-- Search results will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROPERTY DETAIL PAGE -->
+        <div id="propertyDetail" class="page">
+            <div class="container">
+                <div class="detail-layout">
+                    <!-- Main Content -->
+                    <div>
+                        <!-- Image Gallery -->
+                        <div class="image-gallery">
+                            <div class="main-image">
+                                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop" alt="Propiedad">
+                                <button class="property-favorite">
+                                    <i class="fas fa-heart" style="color: #ef4444;"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Property Info -->
+                        <div class="property-details">
+                            <h1 style="font-size: 32px; font-weight: bold; color: #374151; margin-bottom: 8px;">Casa moderna en Nordelta</h1>
+                            <p class="property-location" style="margin-bottom: 24px;">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Av. de los Lagos 1234, Nordelta, Buenos Aires
+                            </p>
+
+                            <div class="property-specs">
+                                <div class="spec">
+                                    <div class="spec-value">4</div>
+                                    <div class="spec-label">Ambientes</div>
+                                </div>
+                                <div class="spec">
+                                    <div class="spec-value">3</div>
+                                    <div class="spec-label">Dormitorios</div>
+                                </div>
+                                <div class="spec">
+                                    <div class="spec-value">2</div>
+                                    <div class="spec-label">Baños</div>
+                                </div>
+                                <div class="spec">
+                                    <div class="spec-value">180m²</div>
+                                    <div class="spec-label">Superficie</div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 24px;">
+                                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Descripción</h3>
+                                <p style="color: #374151; line-height: 1.6;">
+                                    Hermosa casa moderna ubicada en el exclusivo barrio de Nordelta. Con un diseño contemporáneo y acabados de primera calidad, esta propiedad ofrece amplios espacios y una excelente distribución. La casa cuenta con living-comedor integrado, cocina equipada, lavadero, garage para dos autos y un hermoso jardín con parrilla.
+                                </p>
+                            </div>
+
+                            <div>
+                                <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Características</h3>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                    <div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Aire acondicionado</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Calefacción central</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Cochera cubierta</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Jardín</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Parrilla</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Seguridad 24hs</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Piscina comunitaria</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center;">
+                                            <i class="fas fa-check" style="color: #10b981; margin-right: 8px;"></i>
+                                            <span>Club house</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Sidebar -->
+                    <div>
+                        <div class="contact-sidebar">
+                            <div class="price-display">
+                                <div class="price-value">USD 320,000</div>
+                                <div class="price-label">Precio de lista</div>
+                            </div>
+
+                            <!-- Contact Form -->
+                            <form class="contact-form">
+                                <input type="text" placeholder="Tu nombre" class="input-field">
+                                <input type="email" placeholder="Tu email" class="input-field">
+                                <input type="tel" placeholder="Tu teléfono" class="input-field">
+                                <textarea placeholder="
+
+
+
+
+
+
+
